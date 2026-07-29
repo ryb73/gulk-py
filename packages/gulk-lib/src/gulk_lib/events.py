@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from gulk_lib.cards import Card
 from gulk_lib.game_state import GameConfig
 
 
@@ -10,7 +11,7 @@ class NewGame:
 
 @dataclass
 class Shuffle:
-    seed: int
+    deck: list[Card]
 
 
 @dataclass
