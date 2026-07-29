@@ -10,12 +10,8 @@ class NewGame:
 
 
 @dataclass
-class Shuffle:
-    deck: list[Card]
-
-
-@dataclass
 class Deal:
+    deck: list[Card]
     dealer_id: int
     cards_per_player: int
     trump: bool
@@ -27,4 +23,4 @@ class PlayCard:
     card_id: int
 
 
-GameEvent = NewGame | Shuffle | Deal | PlayCard
+GameEvent = NewGame | Deal | PlayCard
