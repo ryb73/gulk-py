@@ -24,6 +24,7 @@ build-backend = "uv_build"
 dev = [
     "inline-snapshot>=0.35.3",
     "pyrefly>=1.1.1",
+    "pyright>=1.1.411",
     "pytest>=9.1.1",
     "ruff>=0.16.0",
 ]

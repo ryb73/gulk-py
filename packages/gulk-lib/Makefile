@@ -1,7 +1,11 @@
 test:
 	uv run pytest
 
-watch:
-	watchexec -e py -- uv run pyrefly check "&&" uv run pytest --inline-snapshot=create,fix,update,trim
+check:
+	uv run pyrefly check
+	uv run pyright
 
-.PHONY: test watch
+watch:
+	watchexec -e py -- make check "&&" uv run pytest --inline-snapshot=create,fix,update,trim
+
+.PHONY: test check watch
