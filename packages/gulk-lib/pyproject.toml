@@ -3,18 +3,17 @@ name = "gulk-lib"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "Ryan", email = "rpbiwer@gmail.com" }
-]
+authors = [{ name = "Ryan", email = "rpbiwer@gmail.com" }]
 requires-python = ">=3.12"
 dependencies = []
 
 [tool.pyrefly]
-project-includes = [
-    "**/*.py*",
-    "**/*.ipynb",
-]
+project-includes = ["**/*.py*", "**/*.ipynb"]
+search-path = ["src", "."]
 preset = "strict"
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
 
 [build-system]
 requires = ["uv_build>=0.11.32,<0.12.0"]

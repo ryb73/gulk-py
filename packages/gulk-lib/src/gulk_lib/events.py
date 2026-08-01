@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from gulk_lib.cards import Card
 from gulk_lib.game_state import GameConfig
+from gulk_lib.player_id import PlayerId
 
 
 @dataclass
@@ -11,10 +12,10 @@ class NewGame:
 
 @dataclass
 class Deal:
-    deck: list[Card]
-    dealer_id: int
+    shuffled_deck: list[Card]
+    dealer_id: PlayerId
     cards_per_player: int
-    trump: bool
+    deal_trump: bool
 
 
 @dataclass
