@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from gulk_lib.cards import Card
+from gulk_lib.cards import Card, CardId
 from gulk_lib.game_state import GameConfig
 from gulk_lib.player_id import PlayerId
 
@@ -20,8 +20,8 @@ class Deal:
 
 @dataclass
 class PlayCard:
-    player_id: int
-    card_id: int
+    player_id: PlayerId
+    card_id: CardId
 
 
 GameEvent = NewGame | Deal | PlayCard

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, assert_never
 
-from gulk_lib.events import Deal, GameEvent, NewGame
+from gulk_lib.events import Deal, GameEvent, NewGame, PlayCard
 from gulk_lib.game_state import GameState, HandState
 
 if TYPE_CHECKING:
@@ -32,7 +32,32 @@ def apply_event(state: GameState, event: GameEvent):
             num_cards_dealt = sum(len(hand) for hand in player_hands.values())
 
             state.hand_state = HandState(
-                player_hands, {}, shuffled_deck[num_cards_dealt] if deal_trump else None
+                player_hands,
+                current_trick=[],
+                finished_tricks=[],
+                trump=shuffled_deck[num_cards_dealt] if deal_trump else None,
             )
+        case PlayCard(player_id, card_id):
+            assert state.config is not None
+            assert state.hand_state is not None
+
+            hand = state.hand_state.player_hands[player_id]
+            current_trick = state.hand_state.current_trick
+
+            card = next((c for c in hand if c.id == card_id), None)
+            assert card is not None, f"card {card_id} not in {player_id}'s hand"
+
+            hand.remove(card)
+            current_trick.append((player_id, card))
+
+            # If all players have played a card for this trick
+            if len(current_trick) == len(state.config.players):
+                raise NotImplementedError
+
+                # If all players are out of cards, then the hand is over (and since all
+                # players should have the same number of cards at the end of a trick,
+                # we only need to check one player)
+                if len(next(iter(state.hand_state.player_hands.values()))) == 0:
+                    raise NotImplementedError
         case _:
             assert_never(event)
