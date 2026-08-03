@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, assert_never
 
-from gulk_lib.events import Deal, GameEvent, NewGame, PlayCard
+from gulk_lib.events import Bid, Deal, GameEvent, NewGame, PlayCard
 from gulk_lib.game_state import GameState, HandState
 
 if TYPE_CHECKING:
@@ -13,6 +13,7 @@ def apply_event(state: GameState, event: GameEvent):
         case NewGame(config):
             assert state.config is None
             state.config = config
+
         case Deal(shuffled_deck, _, cards_per_player, deal_trump):
             assert state.config is not None
             assert cards_per_player * len(state.config.players) + (
@@ -32,11 +33,20 @@ def apply_event(state: GameState, event: GameEvent):
             num_cards_dealt = sum(len(hand) for hand in player_hands.values())
 
             state.hand_state = HandState(
-                player_hands,
+                player_bids={},
+                player_hands=player_hands,
                 current_trick=[],
                 finished_tricks=[],
                 trump=shuffled_deck[num_cards_dealt] if deal_trump else None,
             )
+
+        case Bid(player_id, num_tricks):
+            assert state.config is not None
+            assert state.hand_state is not None
+            assert state.hand_state.player_bids.get(player_id) is None
+
+            state.hand_state.player_bids[player_id] = num_tricks
+
         case PlayCard(player_id, card_id):
             assert state.config is not None
             assert state.hand_state is not None
@@ -59,5 +69,6 @@ def apply_event(state: GameState, event: GameEvent):
                 # we only need to check one player)
                 if len(next(iter(state.hand_state.player_hands.values()))) == 0:
                     raise NotImplementedError
+
         case _:
             assert_never(event)

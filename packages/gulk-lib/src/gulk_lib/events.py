@@ -19,9 +19,15 @@ class Deal:
 
 
 @dataclass
+class Bid:
+    player_id: PlayerId
+    num_tricks: int
+
+
+@dataclass
 class PlayCard:
     player_id: PlayerId
     card_id: CardId
 
 
-GameEvent = NewGame | Deal | PlayCard
+GameEvent = NewGame | Deal | Bid | PlayCard
