@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, assert_never
 
+from gulk_lib.determine_trick_winner import determine_trick_winner
 from gulk_lib.events import Bid, Deal, GameEvent, NewGame, PlayCard
 from gulk_lib.game_state import GameState, HandState
 
@@ -62,7 +63,13 @@ def apply_event(state: GameState, event: GameEvent):
 
             # If all players have played a card for this trick
             if len(current_trick) == len(state.config.players):
-                raise NotImplementedError
+                state.hand_state.finished_tricks.append(
+                    (
+                        determine_trick_winner(current_trick, state.hand_state.trump),
+                        current_trick,
+                    )
+                )
+                state.hand_state.current_trick = []
 
                 # If all players are out of cards, then the hand is over (and since all
                 # players should have the same number of cards at the end of a trick,

@@ -16,15 +16,15 @@ class GameConfig:
     jokers: int
 
 
-Trick = tuple[PlayerId, Card]
+Trick = list[tuple[PlayerId, Card]]
 
 
 @dataclass
 class HandState:
     player_bids: dict[PlayerId, int]
     player_hands: dict[PlayerId, list[Card]]
-    current_trick: list[Trick]
-    finished_tricks: list[list[Trick]]
+    current_trick: Trick
+    finished_tricks: list[tuple[PlayerId, Trick]]
     trump: Card | None
 
 

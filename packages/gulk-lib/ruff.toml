@@ -1,7 +1,7 @@
 [lint]
 select = ["ALL"]
 # COM812: would like to enable but incompatible; see https://github.com/astral-sh/ruff/issues/9216
-ignore = ["CPY001", "D", "ANN201", "S101", "COM812"]
+ignore = ["CPY001", "D", "ANN201", "S101", "COM812", "TRY003"]
 
 [lint.isort]
 split-on-trailing-comma = false

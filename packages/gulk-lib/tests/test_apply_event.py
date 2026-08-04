@@ -281,7 +281,6 @@ def test_play_card_appends_to_existing_current_trick():
     )
 
 
-@pytest.mark.xfail
 def test_play_card_finishes_trick():
     player_1, player_2 = make_player(1), make_player(2)
     deck = build_deck(0)
@@ -299,7 +298,26 @@ def test_play_card_finishes_trick():
 
     apply_event(state, PlayCard(player_2.id, player2_hand[0].id))
 
-    assert state.hand_state == snapshot()
+    assert state.hand_state == snapshot(
+        HandState(
+            player_bids={},
+            player_hands={
+                PlayerId("1"): [SuitedCard(id=CardId(49), rank="Q", suit="♣")],
+                PlayerId("2"): [SuitedCard(id=CardId(50), rank="K", suit="♣")],
+            },
+            current_trick=[],
+            finished_tricks=[
+                (
+                    PlayerId("2"),
+                    [
+                        (PlayerId("1"), SuitedCard(id=CardId(48), rank="J", suit="♣")),
+                        (PlayerId("2"), SuitedCard(id=CardId(51), rank="A", suit="♣")),
+                    ],
+                )
+            ],
+            trump=None,
+        )
+    )
 
 
 def test_play_card_requires_config_to_already_be_set():
