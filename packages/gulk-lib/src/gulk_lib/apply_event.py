@@ -74,7 +74,8 @@ def apply_event(state: GameState, event: GameEvent):
                 # If all players are out of cards, then the hand is over (and since all
                 # players should have the same number of cards at the end of a trick,
                 # we only need to check one player)
-                if len(next(iter(state.hand_state.player_hands.values()))) == 0:
+                first_player_hand = next(iter(state.hand_state.player_hands.values()))
+                if len(first_player_hand) == 0:
                     raise NotImplementedError
 
         case _:
