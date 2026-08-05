@@ -1,20 +1,8 @@
 from dataclasses import dataclass, field
 
 from gulk_lib.cards import Card
+from gulk_lib.game_config import GameConfig
 from gulk_lib.player_id import PlayerId
-
-
-@dataclass
-class Player:
-    id: PlayerId
-    name: str
-
-
-@dataclass
-class GameConfig:
-    players: list[Player]
-    jokers: int
-
 
 Trick = list[tuple[PlayerId, Card]]
 

@@ -5,7 +5,8 @@ from gulk_lib.apply_event import apply_event
 from gulk_lib.build_deck import build_deck
 from gulk_lib.cards import CardId, Joker, SuitedCard
 from gulk_lib.events import Bid, Deal, NewGame, PlayCard
-from gulk_lib.game_state import GameConfig, GameState, HandState, Player
+from gulk_lib.game_config import Player
+from gulk_lib.game_state import GameConfig, GameState, HandState
 from gulk_lib.player_id import PlayerId
 from tests.factories import make_player
 

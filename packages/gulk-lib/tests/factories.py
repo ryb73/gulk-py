@@ -1,4 +1,4 @@
-from gulk_lib.game_state import Player
+from gulk_lib.game_config import Player
 from gulk_lib.player_id import PlayerId
 
 
