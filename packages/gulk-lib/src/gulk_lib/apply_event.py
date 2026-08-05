@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, assert_never
 from gulk_lib.determine_trick_winner import determine_trick_winner
 from gulk_lib.events import Bid, Deal, GameEvent, NewGame, PlayCard
 from gulk_lib.game_state import GameState, HandState
+from gulk_lib.scoring import score_round
 
 if TYPE_CHECKING:
     from gulk_lib.cards import Card
@@ -14,6 +15,7 @@ def apply_event(state: GameState, event: GameEvent):
         case NewGame(config):
             assert state.config is None
             state.config = config
+            state.scores = {p.id: 0 for p in config.players}
 
         case Deal(shuffled_deck, _, cards_per_player, deal_trump):
             assert state.config is not None
@@ -26,6 +28,7 @@ def apply_event(state: GameState, event: GameEvent):
             # technically it doesn't matter since the deck is random anyway.
             player_hands: dict[PlayerId, list[Card]] = {
                 p.id: shuffled_deck[
+                    # TODO(ryan): is `i` 0-indexed or 1-indexed? I'm treating it as 0 now  # noqa: E501, FIX002
                     i * cards_per_player : (i * cards_per_player) + cards_per_player
                 ]
                 for i, p in enumerate(state.config.players)
@@ -34,10 +37,7 @@ def apply_event(state: GameState, event: GameEvent):
             num_cards_dealt = sum(len(hand) for hand in player_hands.values())
 
             state.hand_state = HandState(
-                player_bids={},
                 player_hands=player_hands,
-                current_trick=[],
-                finished_tricks=[],
                 trump=shuffled_deck[num_cards_dealt] if deal_trump else None,
             )
 
@@ -76,7 +76,13 @@ def apply_event(state: GameState, event: GameEvent):
                 # we only need to check one player)
                 first_player_hand = next(iter(state.hand_state.player_hands.values()))
                 if len(first_player_hand) == 0:
-                    raise NotImplementedError
+                    for player_id, score in score_round(
+                        state.hand_index, state.hand_state
+                    ).items():
+                        state.scores[player_id] += score
+
+                    state.hand_index += 1
+                    state.hand_state = None
 
         case _:
             assert_never(event)

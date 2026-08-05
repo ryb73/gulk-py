@@ -24,7 +24,8 @@ def test_new_game():
                     Player(id=PlayerId("3"), name="Player 3"),
                 ],
                 jokers=2,
-            )
+            ),
+            scores={PlayerId("1"): 0, PlayerId("2"): 0, PlayerId("3"): 0},
         )
     )
 
@@ -353,3 +354,38 @@ def test_play_card_raises_if_card_not_in_hand():
 
     with pytest.raises(AssertionError):
         apply_event(state, PlayCard(player_1.id, card2.id))
+
+
+def test_play_card_finishes_hand_scores_it_and_advances_hand_index():
+    player_1, player_2 = make_player(1), make_player(2)
+    deck = build_deck(0)
+    player2_card = deck.pop()
+    lead_card = deck.pop()
+    state = GameState(
+        config=GameConfig([player_1, player_2], jokers=0),
+        scores={player_1.id: 5, player_2.id: 5},
+        hand_index=0,
+        hand_state=HandState(
+            player_bids={player_1.id: 1, player_2.id: 1},
+            player_hands={player_1.id: [], player_2.id: [player2_card]},
+            current_trick=[(player_1.id, lead_card)],
+            finished_tricks=[],
+            trump=None,
+        ),
+    )
+
+    apply_event(state, PlayCard(player_2.id, player2_card.id))
+
+    assert state == snapshot(
+        GameState(
+            config=GameConfig(
+                players=[
+                    Player(id=PlayerId("1"), name="Player 1"),
+                    Player(id=PlayerId("2"), name="Player 2"),
+                ],
+                jokers=0,
+            ),
+            scores={PlayerId("1"): 5, PlayerId("2"): 16},
+            hand_index=1,
+        )
+    )
