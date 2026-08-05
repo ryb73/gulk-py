@@ -97,6 +97,102 @@ def test_deal_sets_trump_to_the_card_after_the_last_hand():
     )
 
 
+def test_deal_supports_the_max_players_and_cards_per_player_the_game_allows():
+    # GAME_ROUNDS never deals more than 7 cards per player, so 7 players is the most
+    # that can be dealt a full round (49 cards) plus a trump card (50) from a single
+    # 52-card deck.
+    players = [make_player(n) for n in range(1, 8)]
+    deck = build_deck(jokers=0)
+    state = GameState(config=GameConfig(players, jokers=0))
+
+    apply_event(state, Deal(deck, players[0].id, cards_per_player=7, deal_trump=True))
+
+    assert state == snapshot(
+        GameState(
+            config=GameConfig(
+                players=[
+                    Player(id=PlayerId("1"), name="Player 1"),
+                    Player(id=PlayerId("2"), name="Player 2"),
+                    Player(id=PlayerId("3"), name="Player 3"),
+                    Player(id=PlayerId("4"), name="Player 4"),
+                    Player(id=PlayerId("5"), name="Player 5"),
+                    Player(id=PlayerId("6"), name="Player 6"),
+                    Player(id=PlayerId("7"), name="Player 7"),
+                ],
+                jokers=0,
+            ),
+            hand_state=HandState(
+                player_hands={
+                    PlayerId("1"): [
+                        SuitedCard(id=CardId(0), rank=2, suit="♠"),
+                        SuitedCard(id=CardId(1), rank=3, suit="♠"),
+                        SuitedCard(id=CardId(2), rank=4, suit="♠"),
+                        SuitedCard(id=CardId(3), rank=5, suit="♠"),
+                        SuitedCard(id=CardId(4), rank=6, suit="♠"),
+                        SuitedCard(id=CardId(5), rank=7, suit="♠"),
+                        SuitedCard(id=CardId(6), rank=8, suit="♠"),
+                    ],
+                    PlayerId("2"): [
+                        SuitedCard(id=CardId(7), rank=9, suit="♠"),
+                        SuitedCard(id=CardId(8), rank=10, suit="♠"),
+                        SuitedCard(id=CardId(9), rank="J", suit="♠"),
+                        SuitedCard(id=CardId(10), rank="Q", suit="♠"),
+                        SuitedCard(id=CardId(11), rank="K", suit="♠"),
+                        SuitedCard(id=CardId(12), rank="A", suit="♠"),
+                        SuitedCard(id=CardId(13), rank=2, suit="♥"),
+                    ],
+                    PlayerId("3"): [
+                        SuitedCard(id=CardId(14), rank=3, suit="♥"),
+                        SuitedCard(id=CardId(15), rank=4, suit="♥"),
+                        SuitedCard(id=CardId(16), rank=5, suit="♥"),
+                        SuitedCard(id=CardId(17), rank=6, suit="♥"),
+                        SuitedCard(id=CardId(18), rank=7, suit="♥"),
+                        SuitedCard(id=CardId(19), rank=8, suit="♥"),
+                        SuitedCard(id=CardId(20), rank=9, suit="♥"),
+                    ],
+                    PlayerId("4"): [
+                        SuitedCard(id=CardId(21), rank=10, suit="♥"),
+                        SuitedCard(id=CardId(22), rank="J", suit="♥"),
+                        SuitedCard(id=CardId(23), rank="Q", suit="♥"),
+                        SuitedCard(id=CardId(24), rank="K", suit="♥"),
+                        SuitedCard(id=CardId(25), rank="A", suit="♥"),
+                        SuitedCard(id=CardId(26), rank=2, suit="♦"),
+                        SuitedCard(id=CardId(27), rank=3, suit="♦"),
+                    ],
+                    PlayerId("5"): [
+                        SuitedCard(id=CardId(28), rank=4, suit="♦"),
+                        SuitedCard(id=CardId(29), rank=5, suit="♦"),
+                        SuitedCard(id=CardId(30), rank=6, suit="♦"),
+                        SuitedCard(id=CardId(31), rank=7, suit="♦"),
+                        SuitedCard(id=CardId(32), rank=8, suit="♦"),
+                        SuitedCard(id=CardId(33), rank=9, suit="♦"),
+                        SuitedCard(id=CardId(34), rank=10, suit="♦"),
+                    ],
+                    PlayerId("6"): [
+                        SuitedCard(id=CardId(35), rank="J", suit="♦"),
+                        SuitedCard(id=CardId(36), rank="Q", suit="♦"),
+                        SuitedCard(id=CardId(37), rank="K", suit="♦"),
+                        SuitedCard(id=CardId(38), rank="A", suit="♦"),
+                        SuitedCard(id=CardId(39), rank=2, suit="♣"),
+                        SuitedCard(id=CardId(40), rank=3, suit="♣"),
+                        SuitedCard(id=CardId(41), rank=4, suit="♣"),
+                    ],
+                    PlayerId("7"): [
+                        SuitedCard(id=CardId(42), rank=5, suit="♣"),
+                        SuitedCard(id=CardId(43), rank=6, suit="♣"),
+                        SuitedCard(id=CardId(44), rank=7, suit="♣"),
+                        SuitedCard(id=CardId(45), rank=8, suit="♣"),
+                        SuitedCard(id=CardId(46), rank=9, suit="♣"),
+                        SuitedCard(id=CardId(47), rank=10, suit="♣"),
+                        SuitedCard(id=CardId(48), rank="J", suit="♣"),
+                    ],
+                },
+                trump=SuitedCard(id=CardId(49), rank="Q", suit="♣"),
+            ),
+        )
+    )
+
+
 def test_deal_requires_config_to_already_be_set():
     state = GameState()
     deck = build_deck(jokers=0)

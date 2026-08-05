@@ -28,7 +28,6 @@ def apply_event(state: GameState, event: GameEvent):
             # technically it doesn't matter since the deck is random anyway.
             player_hands: dict[PlayerId, list[Card]] = {
                 p.id: shuffled_deck[
-                    # TODO(ryan): is `i` 0-indexed or 1-indexed? I'm treating it as 0 now  # noqa: E501, FIX002
                     i * cards_per_player : (i * cards_per_player) + cards_per_player
                 ]
                 for i, p in enumerate(state.config.players)
