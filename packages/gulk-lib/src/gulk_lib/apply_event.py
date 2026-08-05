@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, assert_never
 
 from gulk_lib.determine_trick_winner import determine_trick_winner
 from gulk_lib.events import Bid, Deal, GameEvent, NewGame, PlayCard
+from gulk_lib.game_config import validate_config
 from gulk_lib.game_state import GameState, HandState
 from gulk_lib.scoring import score_round
 
@@ -14,6 +15,8 @@ def apply_event(state: GameState, event: GameEvent):
     match event:
         case NewGame(config):
             assert state.config is None
+            assert validate_config(config)
+
             state.config = config
             state.scores = {p.id: 0 for p in config.players}
 

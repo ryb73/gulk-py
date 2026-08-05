@@ -5,8 +5,8 @@ from gulk_lib.apply_event import apply_event
 from gulk_lib.build_deck import build_deck
 from gulk_lib.cards import CardId, Joker, SuitedCard
 from gulk_lib.events import Bid, Deal, NewGame, PlayCard
-from gulk_lib.game_config import Player
-from gulk_lib.game_state import GameConfig, GameState, HandState
+from gulk_lib.game_config import GameConfig, Player
+from gulk_lib.game_state import GameState, HandState
 from gulk_lib.player_id import PlayerId
 from tests.factories import make_player
 
@@ -28,6 +28,74 @@ def test_new_game():
             ),
             scores={PlayerId("1"): 0, PlayerId("2"): 0, PlayerId("3"): 0},
         )
+    )
+
+
+def test_new_game_supports_7_players():
+    state = GameState()
+    # This should not raise
+    apply_event(
+        state,
+        NewGame(
+            GameConfig(
+                [
+                    make_player(1),
+                    make_player(2),
+                    make_player(3),
+                    make_player(4),
+                    make_player(5),
+                    make_player(6),
+                    make_player(7),
+                ],
+                jokers=0,
+            )
+        ),
+    )
+
+
+def test_new_game_fails_early_for_8_players():
+    state = GameState()
+    with pytest.raises(AssertionError):
+        apply_event(
+            state,
+            NewGame(
+                GameConfig(
+                    [
+                        make_player(1),
+                        make_player(2),
+                        make_player(3),
+                        make_player(4),
+                        make_player(5),
+                        make_player(6),
+                        make_player(7),
+                        make_player(8),
+                    ],
+                    jokers=0,
+                )
+            ),
+        )
+
+
+def test_new_game_supports_8_players_with_enough_cards():
+    state = GameState()
+    # This should not raise
+    apply_event(
+        state,
+        NewGame(
+            GameConfig(
+                [
+                    make_player(1),
+                    make_player(2),
+                    make_player(3),
+                    make_player(4),
+                    make_player(5),
+                    make_player(6),
+                    make_player(7),
+                    make_player(8),
+                ],
+                jokers=5,
+            )
+        ),
     )
 
 
