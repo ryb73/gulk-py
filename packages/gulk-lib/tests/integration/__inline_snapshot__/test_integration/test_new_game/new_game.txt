@@ -1,0 +1,6 @@
+GameState(config=GameConfig(players=[Player(id='1', name='Player 1'),
+                                     Player(id='2', name='Player 2')],
+                            jokers=0),
+          scores={'1': 0, '2': 0},
+          hand_index=0,
+          hand_state=None)
