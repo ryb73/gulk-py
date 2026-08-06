@@ -65,6 +65,9 @@ def apply_event(state: GameState, event: GameEvent):
             assert state.config is not None
             assert state.hand_state is not None
 
+            # TODO(ryan): enforce follow-suit  # noqa: FIX002
+            # players must play a card matching the suit led if they hold one;
+            # currently any card in hand is accepted.
             hand = state.hand_state.player_hands[player_id]
             current_trick = state.hand_state.current_trick
 

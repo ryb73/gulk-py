@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 from pprint import pformat
 
@@ -24,7 +25,7 @@ def apply_events(state: GameState, events: Sequence[GameEvent]) -> list[Step]:
     history: list[Step] = []
     for event in events:
         apply_event(state, event)
-        history.append(Step(event, state))
+        history.append(Step(event, deepcopy(state)))
     return history
 
 
