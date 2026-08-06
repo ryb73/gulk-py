@@ -1,3 +1,7 @@
+NewGame(game_config=GameConfig(players=[Player(id='1', name='Player 1'),
+                                        Player(id='2', name='Player 2')],
+                               jokers=0))
+->
 GameState(config=GameConfig(players=[Player(id='1', name='Player 1'),
                                      Player(id='2', name='Player 2')],
                             jokers=0),
