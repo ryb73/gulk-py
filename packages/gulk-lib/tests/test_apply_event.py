@@ -349,6 +349,84 @@ def test_bid_requires_hand_state_to_already_be_set():
         apply_event(state, Bid(player_1.id, 3))
 
 
+def test_bid_raises_if_final_bid_would_sum_to_the_number_of_cards_dealt():
+    player_1, player_2 = make_player(1), make_player(2)
+    deck = build_deck(0)
+    state = GameState(
+        config=GameConfig([player_1, player_2], jokers=0),
+        hand_state=HandState(
+            player_bids={player_1.id: 3},
+            player_hands={
+                player_1.id: [deck.pop() for _ in range(5)],
+                player_2.id: [deck.pop() for _ in range(5)],
+            },
+            current_trick=[],
+            finished_tricks=[],
+            trump=None,
+        ),
+    )
+
+    with pytest.raises(AssertionError):
+        apply_event(state, Bid(player_2.id, 2))
+
+
+def test_bid_allows_final_bid_that_does_not_sum_to_the_number_of_cards_dealt():
+    player_1, player_2 = make_player(1), make_player(2)
+    deck = build_deck(0)
+    player_hands = {
+        player_1.id: ([deck.pop() for _ in range(5)]),
+        player_2.id: ([deck.pop() for _ in range(5)]),
+    }
+    config = GameConfig([player_1, player_2], jokers=0)
+    state = GameState(
+        config=config,
+        hand_state=HandState(
+            player_bids={player_1.id: 3},
+            player_hands=player_hands,
+            current_trick=[],
+            finished_tricks=[],
+            trump=None,
+        ),
+    )
+
+    apply_event(state, Bid(player_2.id, 1))
+
+    assert state == snapshot(
+        GameState(
+            config=config,
+            hand_state=HandState(
+                player_bids={PlayerId("1"): 3, PlayerId("2"): 1},
+                player_hands=player_hands,
+            ),
+        )
+    )
+
+
+def test_bid_does_not_apply_the_final_bid_sum_check_to_non_final_bids():
+    player_1, player_2, player_3 = make_player(1), make_player(2), make_player(3)
+    deck = build_deck(0)
+    player_hands = {
+        player_1.id: [deck.pop() for _ in range(5)],
+        player_2.id: [deck.pop() for _ in range(5)],
+        player_3.id: [deck.pop() for _ in range(5)],
+    }
+    config = GameConfig([player_1, player_2, player_3], jokers=0)
+    state = GameState(config=config, hand_state=HandState(player_hands=player_hands))
+
+    # Not the final bid yet (only 1 of 3 players has bid), so a bid of 5 should be
+    # allowed even though it alone already equals the number of cards dealt.
+    apply_event(state, Bid(player_1.id, 5))
+
+    assert state == snapshot(
+        GameState(
+            config=config,
+            hand_state=HandState(
+                player_bids={PlayerId("1"): 5}, player_hands=player_hands
+            ),
+        )
+    )
+
+
 def test_bid_raises_if_player_already_bid():
     player_1 = make_player(1)
     state = GameState(

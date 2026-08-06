@@ -48,6 +48,17 @@ def apply_event(state: GameState, event: GameEvent):
             assert state.hand_state is not None
             assert state.hand_state.player_bids.get(player_id) is None
 
+            if (
+                len(state.hand_state.player_bids.values())
+                == len(state.config.players) - 1
+            ):
+                any_player_hand = next(iter(state.hand_state.player_hands.values()))
+                num_cards_dealt = len(any_player_hand)
+                assert (
+                    sum(state.hand_state.player_bids.values()) + num_tricks
+                    != num_cards_dealt
+                )
+
             state.hand_state.player_bids[player_id] = num_tricks
 
         case PlayCard(player_id, card_id):
